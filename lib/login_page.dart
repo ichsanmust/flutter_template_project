@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
       var token = user['token'];
       //message = token;
       message = "login success";
-      helper.setSession(token);
+      helper.login(token,email.text); // set session
       Navigator.pop(context); // untuk menghide screen saat ini // jika diperlukan
       //Navigator.of(context).pop(); // untuk menghide screen saat ini // jika diperlukan
       Navigator.push(

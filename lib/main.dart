@@ -28,12 +28,12 @@ class MyApp extends StatelessWidget {
       home: _isAuthenticated
           ? HomePage(title: 'Home')
           : LoginPage(title: 'Login'),
-      routes: {
-        // When navigating to the "/" route, build the FirstScreen widget.
-        //'/': (context) => LoginPage(),
-        // When navigating to the "/second" route, build the SecondScreen widget.
-        //'/home': (context) => HomePage(title: 'Home'),
-      },
+//      routes: {
+//         When navigating to the "/" route, build the FirstScreen widget.
+//        '/': (context) => LoginPage(),
+//         When navigating to the "/second" route, build the SecondScreen widget.
+//        '/home': (context) => HomePage(title: 'Home'),
+//      },
 
 //      initialRoute: '/',
 //      onGenerateRoute: (RouteSettings settings) {
@@ -42,13 +42,12 @@ class MyApp extends StatelessWidget {
 //            return MaterialPageRoute(builder: (_) {
 //              return _isAuthenticated ? AboutPage() : LoginPage(title: 'Login');
 //            });
-////          case '/login':
-////            return MaterialPageRoute(builder: (_) => LoginScreen());
-////          case '/browse':
-////            return MaterialPageRoute(builder: (_) => BrowseScreen());
+//          case '/login':
+//            return MaterialPageRoute(builder: (_) => LoginScreen());
+//          case '/browse':
+//            return MaterialPageRoute(builder: (_) => BrowseScreen());
 //        }
 //      },
-
       debugShowCheckedModeBanner: false,
     );
   }
