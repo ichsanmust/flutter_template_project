@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-//import 'dart:convert';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:http/http.dart' as http;
+//import 'dart:convert';
 
 class Helper {
   static Helper _instance;
@@ -20,18 +20,9 @@ class Helper {
   // the storage key for the user id
   String _storageKeyMobileUserId = "flutter_user_id_1_0";
 
-  // the URL of the Web Server
-  // String _urlBase = "https://www.myserver.com";
-
-  // the URI to the Web Server Web API
-  // String _serverApi = "/api/mobile/";
-
   // the mobile device unique identity
   String _deviceIdentity = "";
 
-  /// ----------------------------------------------------------
-  /// Method which is only run once to fetch the device identity
-  /// ----------------------------------------------------------
   final DeviceInfoPlugin _deviceInfoPlugin = new DeviceInfoPlugin();
   Future<String> _getDeviceIdentity() async {
     if (_deviceIdentity == '') {
@@ -51,10 +42,6 @@ class Helper {
     return _deviceIdentity;
   }
 
-  /// ----------------------------------------------------------
-  /// Method that returns the token from Shared Preferences
-  /// ----------------------------------------------------------
-
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   Future<String> _getMobileToken() async {
@@ -63,9 +50,6 @@ class Helper {
     return prefs.getString(_storageKeyMobileToken) ?? '';
   }
 
-  /// ----------------------------------------------------------
-  /// Method that saves the token in Shared Preferences
-  /// ----------------------------------------------------------
   Future<bool> _setMobileToken(String token) async {
     final SharedPreferences prefs = await _prefs;
 
@@ -108,21 +92,42 @@ class Helper {
     var session = {
       'application_id': _applicationId,
       'device_id': deviceId,
-      'token': sessionTokenData,
+      'auth_key': sessionTokenData,
       'userid': sessionUserIdData
     };
     return session;
   }
 
-  Future<bool>login(String token, userid) async {
-    await setSession(token,userid);
+  Future<bool> login(String token, userid) async {
+    await setSession(token, userid);
     return null;
   }
 
-  Future<bool>logout() async {
+  Future<bool> logout() async {
     await _setMobileToken('');
     await _setMobileUserId('');
     return null;
   }
+
+
+  static getApplicationToken() {
+    return 'asfafasfdsajeej89sadfasjfbwasfsagipPajjqwidbQBiadq';
+  }
+  static baseUrlApi() {
+    var url = "http://10.0.2.2/flutter_template_project_api/web/index.php";
+    return url;
+  }
+
+  Future<String> getDeviceId() async {
+    var deviceId = await _getDeviceIdentity();
+    return deviceId;
+  }
+
+  Future<String> getApplicationId() async {
+    var applicationId = _applicationId;
+    return applicationId;
+  }
+
+
 
 }

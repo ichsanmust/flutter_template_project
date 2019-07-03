@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_template_project/helper.dart';
-
-import 'package:flutter_template_project/login_page.dart';
-import 'package:flutter_template_project/home_page.dart';
+// components
+import 'package:flutter_template_project/components/helper.dart';
+// views
+import 'package:flutter_template_project/views/login_page.dart';
+import 'package:flutter_template_project/views/home_page.dart';
 
 // check session user
 bool _isAuthenticated = false;
@@ -13,7 +14,7 @@ Future<bool> get checkSessionData => helper.checkSession();
 
 void main() async {
   _isAuthenticated = await checkSessionData;
-  //print("isLogin : ${_isAuthenticated}");
+//  print("isLogin : ${_isAuthenticated}");
   runApp(MyApp());
 }
 

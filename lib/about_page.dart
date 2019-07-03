@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_template_project/home_page.dart';
+import 'package:flutter_template_project/views/home_page.dart';
 
 class AboutPage extends StatefulWidget {
   @override

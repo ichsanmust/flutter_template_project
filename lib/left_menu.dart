@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 //import 'dart:convert';
 
-import 'package:flutter_template_project/helper.dart';
+
+import 'package:flutter_template_project/components/helper.dart';
+import 'package:flutter_template_project/skeleton.dart';
 
 class LeftMenu extends StatefulWidget {
   @override
@@ -17,7 +19,7 @@ class _LeftMenuState extends State<LeftMenu> {
 
   void getSession() async {
     session = await sessionDataSource;
-    //print(session);
+    print(session);
     //print(session['token']);
     setState(() {
       userid = session['userid'];
@@ -77,6 +79,29 @@ class _LeftMenuState extends State<LeftMenu> {
 //                    builder: (BuildContext context) => new TabLayoutDemo()));
 //          },
         ),
+        new ListTile(
+          leading: new Icon(Icons.home),
+          title: new Text(
+            'Home',
+            style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
+          ),
+          //selected: i == _selectedIndex,
+          //onTap: () => _onSelectItem(i),
+        ),
+        new ListTile(
+          leading: new Icon(Icons.ac_unit),
+          title: new Text(
+            'Skeleton',
+            style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
+          ),
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (BuildContext context) => new Skeleton()));
+          },
+        )
       ],
     );
   }
