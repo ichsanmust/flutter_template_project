@@ -30,12 +30,12 @@ class LoginModel {
     return messages;
   }
 
-  static Future login(email, password, deviceId, applicationId) async {
+  static Future apiLogin(email, password, deviceId, applicationId) async {
     var applicationToken = Helper.getApplicationToken();
     var url = Helper.baseUrlApi() + "?r=api/default/login";
     var response = await http.post(url, headers: {
       //"Content-Type": "application/json",
-      "app_mobile_token":  applicationToken,
+      "app_mobile_token": applicationToken,
       "user_mobile_token": "",
     }, body: {
       "username": email,
@@ -55,4 +55,18 @@ class LoginModel {
       };
     }
   }
+
+  static Future login(email, password, deviceId, applicationId) async {
+    var data = await apiLogin(email, password, deviceId, applicationId)
+        .timeout(Duration(seconds: 30), onTimeout: () {
+          print('30 seconds timed out');
+        })
+        .catchError(print);
+    return data;
+  }
+//  void main() {
+//    new Future.delayed(new Duration(seconds: 5), () {
+//      return 1;
+//    }).timeout(new Duration(seconds: 2)).then(print).catchError(print);
+//  }
 }

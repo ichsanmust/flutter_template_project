@@ -64,26 +64,31 @@ class _LoginPageState extends State<LoginPage> {
     await LoginModel.login(
             username.text, password.text, deviceId, applicationId)
         .then((data) {
-      if (data['status'] == true) {
-        var token = data['data']['auth_key'];
-        helper.login(token, username.text); // set session
-        message = data['message'];
-        Navigator.pop(
-            context); // untuk menghide screen saat ini // jika diperlukan
-        Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    new HomePage(title: 'Home')));
-      } else {
-        if (data['code'] == 200) {
-          //print(data['message']);
-          //message = data['message'] + '\n';
-          var messagesError = LoginModel.errorMessage(data['data']);
-          message += messagesError;
+          //print(data);
+      if (data != null) {
+        if (data['status'] == true) {
+          var token = data['data']['auth_key'];
+          helper.login(token, username.text); // set session
+          message = data['message'];
+          Navigator.pop(
+              context); // untuk menghide screen saat ini // jika diperlukan
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      new HomePage(title: 'Home')));
         } else {
-          message = data['data']['message'];
+          if (data['code'] == 200) {
+            //print(data['message']);
+            //message = data['message'] + '\n';
+            var messagesError = LoginModel.errorMessage(data['data']);
+            message += messagesError;
+          } else {
+            message = data['data']['message'];
+          }
         }
+      } else {
+        message = 'system error (timeout)';
       }
     });
 
