@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                 new MaterialPageRoute(
                     builder: (BuildContext context) => new HomePage(
                           title: 'Home',
-                          flashMessage: 'Successfully Login',
+                          flashMessage: data['message'],
                         )));
           } else {
             if (data['code'] == 200) {
@@ -156,7 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: new InputDecoration(
                     hintText: 'Username',
                     labelText: 'Enter your username',
-                    icon: Icon(Icons.person_outline),
+                    icon: Icon(Icons.person),
                     fillColor: Colors.white,
                   ),
                   validator: (value) {

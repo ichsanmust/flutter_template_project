@@ -4,15 +4,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 // component
 import 'package:flutter_template_project/components/helper.dart';
+// style
+//import 'package:flutter_template_project/css/style.dart' as Style;
 // views
-import 'package:flutter_template_project/views/login_page.dart';
-import 'package:flutter_template_project/left_menu.dart';
-import 'package:flutter_template_project/about_page.dart';
-
+import 'package:flutter_template_project/views/left_menu.dart';
 // models
-import 'package:flutter_template_project/models/logout_model.dart';
 
-enum ListPopupMenu { logout }
+enum ListPopupMenu { action1, other }
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title, this.flashMessage = ''}) : super(key: key);
@@ -25,7 +23,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final Helper helper = new Helper();
-
   Future<Map> get sessionDataSource => helper.getSession();
   var session = {};
   void getSession() async {
@@ -46,45 +43,6 @@ class _HomePageState extends State<HomePage> {
     helper.flashMessage(widget.flashMessage);
     getSession();
   }
-
-  // logout action
-  Future<List> _logout() async {
-    setState(() {
-      isLoading = true;
-      message = "";
-    });
-
-    await LogoutModel.logout(session['auth_key']).then((data) {
-      //print(data);
-      if (data['status'] == true) {
-        message = data['message'];
-        helper.logout();
-        Navigator.pop(
-            context); // untuk menghide screen saat ini // jika diperlukan
-        Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    new LoginPage(title: 'Login', flashMessage: 'Thanks for using the Apps',)));
-      } else {
-        if (data['code'] == 200) {
-          message = data['message'];
-        } else {
-          message = data['data']['message'];
-        }
-        //print(message);
-      }
-    });
-
-    setState(() {
-      message = message;
-      isLoading = false;
-    });
-
-    //return _logout();
-    return null;
-  }
-  // logout action
 
   // on back button
   Future<bool> onWillPop() {
@@ -108,17 +66,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBodyWidget() {
     return Center(
-      child: RaisedButton(
-        onPressed: () {
-          //Navigator.pop(context); // untuk menghide screen saat ini // jika diperlukan
-          //Navigator.of(context).pop(); // untuk menghide screen saat ini // jika diperlukan
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (BuildContext context) => new AboutPage()));
-        },
-        child: Text('To About Page'),
-      ),
+      child: Text('Home'),
     );
   }
 
@@ -134,17 +82,24 @@ class _HomePageState extends State<HomePage> {
             actions: <Widget>[
               PopupMenuButton<ListPopupMenu>(
                 onSelected: (ListPopupMenu result) {
-                  if (result == ListPopupMenu.logout) {
-                    _logout();
+                  if (result == ListPopupMenu.action1) {
+                    //this._logout();
+                    print("action 1");
+                  } else if (result == ListPopupMenu.other) {
+                    print("other");
                   } else {
-                    //print("not");
+                    // none
                   }
                 },
                 itemBuilder: (BuildContext context) =>
                     <PopupMenuEntry<ListPopupMenu>>[
                       const PopupMenuItem<ListPopupMenu>(
-                        value: ListPopupMenu.logout,
-                        child: Text('Logout'),
+                        value: ListPopupMenu.action1,
+                        child: Text('Action 1'),
+                      ),
+                      const PopupMenuItem<ListPopupMenu>(
+                        value: ListPopupMenu.other,
+                        child: Text('Other'),
                       ),
                     ],
               )

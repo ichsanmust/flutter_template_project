@@ -22,7 +22,7 @@ class LogoutModel {
 //    return messages;
 //  }
 
-  static Future logout(authKey) async {
+  static Future apiLogout(authKey) async {
     var applicationToken = Helper.getApplicationToken();
     var url = Helper.baseUrlApi() + "?r=api/default/logout";
     var response = await http.post(url, headers: {
@@ -43,5 +43,13 @@ class LogoutModel {
         'data': {'message': 'system error'},
       };
     }
+  }
+
+  static Future logout(authKey) async {
+    var data = await apiLogout(authKey)
+        .timeout(Duration(seconds: 30), onTimeout: () {
+      print('30 seconds timed out');
+    }).catchError(print);
+    return data;
   }
 }

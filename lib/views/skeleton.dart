@@ -36,7 +36,7 @@ class Skeleton extends StatelessWidget {
                               highlightColor: Colors.white,
                               child: ListItem(index: -1)),
 
-                        //);
+                          //);
 //                        return ListView.builder(
 //                          itemCount: 10,
 //                          // Important code

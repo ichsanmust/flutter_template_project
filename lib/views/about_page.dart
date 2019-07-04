@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+// views
 import 'package:flutter_template_project/views/home_page.dart';
+import 'package:flutter_template_project/views/left_menu.dart';
 
 class AboutPage extends StatefulWidget {
   @override
@@ -12,7 +14,10 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('About Page'),
+        title: Text('About'),
+      ),
+      drawer: new Drawer(
+        child: LeftMenu(),
       ),
       body: Center(
         child: RaisedButton(
@@ -24,7 +29,7 @@ class _AboutPageState extends State<AboutPage> {
                 new MaterialPageRoute(
                     builder: (BuildContext context) => new HomePage(title: 'Home')));
           },
-          child: Text('to Home'),
+          child: Text('Back to Home'),
         ),
       ),
     );

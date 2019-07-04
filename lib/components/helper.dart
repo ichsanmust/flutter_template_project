@@ -133,14 +133,20 @@ class Helper {
   }
 
   // flashMessage
-  flashMessage(message) {
+  flashMessage(message, {type = ''}) {
+    var typeMessage ;
+    if(type == ''){
+      typeMessage = Style.Default.btnInfo();
+    }else{
+      typeMessage = type;
+    }
     if (message != '') {
       Fluttertoast.showToast(
           msg: message,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
 //          timeInSecForIos: 1,
-          backgroundColor: Style.Default.btnInfo(),
+          backgroundColor: typeMessage,
 //          textColor: Colors.white,
           fontSize: 12.0);
     }
