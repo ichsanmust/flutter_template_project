@@ -25,6 +25,26 @@ class Default {
           //backgroundColor: Colors.red[200],
         );
   }
+
+  static Color btnInfo() {
+    return Colors.green;
+  }
+
+  static TextStyle btnInfoText(BuildContext context) {
+    return Theme.of(context).textTheme.display1.copyWith(
+      fontSize: 14,
+      color: Colors.green,
+      //backgroundColor: Colors.blue[200],
+    );
+  }
+
+  static TextStyle errorText(BuildContext context) {
+    return Theme.of(context).textTheme.display1.copyWith(
+      fontSize: 14,
+      color: Colors.red,
+      //backgroundColor: Colors.red[200],
+    );
+  }
 }
 
 // theme 1

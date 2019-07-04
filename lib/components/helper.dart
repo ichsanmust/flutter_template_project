@@ -3,8 +3,12 @@ import 'dart:io';
 import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 //import 'package:http/http.dart' as http;
 //import 'dart:convert';
+
+// style
+import 'package:flutter_template_project/css/style.dart' as Style;
 
 class Helper {
   static Helper _instance;
@@ -109,10 +113,10 @@ class Helper {
     return null;
   }
 
-
   static getApplicationToken() {
     return 'asfafasfdsajeej89sadfasjfbwasfsagipPajjqwidbQBiadq';
   }
+
   static baseUrlApi() {
     var url = "http://10.0.2.2/flutter_template_project_api/web/index.php";
     return url;
@@ -128,6 +132,19 @@ class Helper {
     return applicationId;
   }
 
-
+  // flashMessage
+  flashMessage(message) {
+    if (message != '') {
+      Fluttertoast.showToast(
+          msg: message,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+//          timeInSecForIos: 1,
+          backgroundColor: Style.Default.btnInfo(),
+//          textColor: Colors.white,
+          fontSize: 12.0);
+    }
+  }
+// flashMessage
 
 }

@@ -6,6 +6,9 @@ import 'dart:convert';
 import 'package:flutter_template_project/components/helper.dart';
 
 class LoginModel {
+  String username = '';
+  String password = '';
+
   static attributes() {
     var attributesData = [
       'username',
@@ -14,6 +17,23 @@ class LoginModel {
       'application_id'
     ];
     return attributesData;
+  }
+
+  String validateUsername(String value) {
+    if (value.isEmpty) {
+      return 'Username Cannot Blank';
+    }
+    return null;
+  }
+
+  String validatePassword(String value) {
+    if (value.isEmpty) {
+      return 'Password Cannot Blank';
+    }
+    if (value.length < 8) {
+      return 'The Password must be at least 8 characters.';
+    }
+    return null;
   }
 
   static errorMessage(error) {
@@ -59,9 +79,8 @@ class LoginModel {
   static Future login(email, password, deviceId, applicationId) async {
     var data = await apiLogin(email, password, deviceId, applicationId)
         .timeout(Duration(seconds: 30), onTimeout: () {
-          print('30 seconds timed out');
-        })
-        .catchError(print);
+      print('30 seconds timed out');
+    }).catchError(print);
     return data;
   }
 //  void main() {
