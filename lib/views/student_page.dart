@@ -150,7 +150,7 @@ class _StudentPageState extends State<StudentPage> {
             return _refresh();
           },
           child: ModalProgressHUD(
-              child: _buildBodyWidget(), inAsyncCall: isLoading),
+              child: _buildBodyWidget(), inAsyncCall: isLoading, opacity: 0),
         ));
   }
 
