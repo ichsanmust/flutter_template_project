@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 // components
 import 'package:flutter_template_project/components/helper.dart';
+// style
+import 'package:flutter_template_project/css/style.dart' as Style;
 // views
 import 'package:flutter_template_project/views/login_page.dart';
 import 'package:flutter_template_project/views/home_page.dart';
 
 // check session user
-bool _isAuthenticated = false;
+var _isAuthenticated = {};
 Helper helper = new Helper();
-Future<bool> get checkSessionData => helper.checkSession();
+Future<Map> get checkSessionData => helper.checkSession();
 // end check session user
 
 void main() async {
@@ -26,30 +28,27 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: _isAuthenticated
-          ? HomePage(title: 'Home')
-          : LoginPage(title: 'Login'),
-//      routes: {
-//         When navigating to the "/" route, build the FirstScreen widget.
-//        '/': (context) => LoginPage(),
-//         When navigating to the "/second" route, build the SecondScreen widget.
-//        '/home': (context) => HomePage(title: 'Home'),
-//      },
-
-//      initialRoute: '/',
-//      onGenerateRoute: (RouteSettings settings) {
-//        switch (settings.name) {
-//          case '/':
-//            return MaterialPageRoute(builder: (_) {
-//              return _isAuthenticated ? AboutPage() : LoginPage(title: 'Login');
-//            });
-//          case '/login':
-//            return MaterialPageRoute(builder: (_) => LoginScreen());
-//          case '/browse':
-//            return MaterialPageRoute(builder: (_) => BrowseScreen());
-//        }
-//      },
+      home: _homePageApp(_isAuthenticated),
       debugShowCheckedModeBanner: false,
     );
+  }
+}
+
+Widget _homePageApp(_isAuthenticated) {
+  if (_isAuthenticated['status'] == true) {
+    return HomePage(
+      title: 'Home',
+    );
+  } else {
+    if (_isAuthenticated['auth_key'] != '') {
+      return LoginPage(
+          title: 'Login',
+          flashMessage: Helper.getTextSessionOver(),
+          typeMessage: Style.Default.btnDanger());
+    } else {
+      return LoginPage(
+        title: 'Login',
+      );
+    }
   }
 }

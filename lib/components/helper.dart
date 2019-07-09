@@ -4,8 +4,8 @@ import 'package:device_info/device_info.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-//import 'package:http/http.dart' as http;
-//import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 // style
 import 'package:flutter_template_project/css/style.dart' as Style;
@@ -72,18 +72,72 @@ class Helper {
     return prefs.setString(_storageKeyMobileUserId, userid);
   }
 
-  Future<bool> checkSession() async {
-    var mobileToken = await _getMobileToken();
-    if (mobileToken != '') {
-      return true;
-    } else {
-      return false;
+  Future<String> getDeviceId() async {
+    var deviceId = await _getDeviceIdentity();
+    return deviceId;
+  }
+
+  Future<String> getApplicationId() async {
+    var applicationId = _applicationId;
+    return applicationId;
+  }
+
+  static Future apiCheckSession(authKey) async {
+    var applicationToken = Helper.getApplicationToken();
+    var url = Helper.baseUrlApi() + "?r=api/default/check-session";
+    var response = await http.get(url, headers: {
+      //"Content-Type": "application/json",
+      "app_mobile_token": applicationToken,
+      "user_mobile_token": authKey,
+    });
+    try {
+      return json.decode(response.body);
+    } catch (e) {
+      print('error caught: $e');
+      return {
+        'status': false,
+        'message': e,
+        'code': 500,
+        'data': {'message': 'system error'},
+      };
     }
   }
 
+  static Future actionCheckSession(authKey) async {
+    var data = await apiCheckSession(authKey).timeout(Duration(seconds: 30),
+        onTimeout: () {
+      print('30 seconds timed out');
+    }).catchError(print);
+    return data;
+  }
+
+  Future<Map<String, dynamic>> checkSession() async {
+    var authKey = await _getMobileToken();
+    var status = false;
+    if (authKey != '') {
+      await Helper.actionCheckSession(authKey).then((data) {
+        if (data != null) {
+          if (data['status'] == true) {
+            status = true;
+          } else {
+            status = false;
+          }
+        } else {
+          status = false;
+        }
+      });
+    } else {
+      status = false;
+    }
+
+    var session = {
+      'status': status,
+      'auth_key': authKey,
+    };
+    return session;
+  }
+
   Future<bool> setSession(String token, userid) async {
-//    var sessionTokenData = await _setMobileToken(token);
-//    var sessionUserIdData = await _setMobileUserId(userid);
     await _setMobileToken(token);
     await _setMobileUserId(userid);
     return null;
@@ -113,8 +167,8 @@ class Helper {
     return null;
   }
 
-  static getApplicationToken() {
-    return 'asfafasfdsajeej89sadfasjfbwasfsagipPajjqwidbQBiadq';
+  static getTextSessionOver() {
+    return 'session has over, please login.';
   }
 
   static baseUrlApi() {
@@ -122,22 +176,16 @@ class Helper {
     return url;
   }
 
-  Future<String> getDeviceId() async {
-    var deviceId = await _getDeviceIdentity();
-    return deviceId;
-  }
-
-  Future<String> getApplicationId() async {
-    var applicationId = _applicationId;
-    return applicationId;
+  static getApplicationToken() {
+    return 'asfafasfdsajeej89sadfasjfbwasfsagipPajjqwidbQBiadq';
   }
 
   // flashMessage
   flashMessage(message, {type = ''}) {
-    var typeMessage ;
-    if(type == ''){
+    var typeMessage;
+    if (type == '') {
       typeMessage = Style.Default.btnInfo();
-    }else{
+    } else {
       typeMessage = type;
     }
     if (message != '') {
@@ -145,9 +193,9 @@ class Helper {
           msg: message,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
-//          timeInSecForIos: 1,
+          // timeInSecForIos: 1,
           backgroundColor: typeMessage,
-//          textColor: Colors.white,
+          // textColor: Colors.white,
           fontSize: 12.0);
     }
   }

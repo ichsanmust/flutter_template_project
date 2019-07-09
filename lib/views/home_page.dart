@@ -6,17 +6,23 @@ import 'package:fluttertoast/fluttertoast.dart';
 // component
 import 'package:flutter_template_project/components/helper.dart';
 // style
-//import 'package:flutter_template_project/css/style.dart' as Style;
+// import 'package:flutter_template_project/css/style.dart' as Style;
 // views
 import 'package:flutter_template_project/views/left_menu.dart';
-// models
+// import 'package:flutter_template_project/views/login_page.dart';
 
 enum ListPopupMenu { action1, other }
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title, this.flashMessage = ''}) : super(key: key);
+  HomePage(
+      {Key key,
+      this.title,
+      this.flashMessage = '',
+      this.typeMessage = Colors.green})
+      : super(key: key);
   final String title;
   final String flashMessage;
+  final Color typeMessage;
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -26,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   final Helper helper = new Helper();
   Future<Map> get sessionDataSource => helper.getSession();
   var session = {};
+
   void getSession() async {
     session = await sessionDataSource;
     setState(() {
@@ -41,7 +48,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    helper.flashMessage(widget.flashMessage);
+    helper.flashMessage(widget.flashMessage, type: widget.typeMessage);
     getSession();
   }
 
@@ -66,12 +73,6 @@ class _HomePageState extends State<HomePage> {
     return Future.value(false);
   }
   // on back button
-
-  Widget _buildBodyWidget() {
-    return Center(
-      child: Text('Home'),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,4 +116,11 @@ class _HomePageState extends State<HomePage> {
               child: _buildBodyWidget(), inAsyncCall: isLoading)),
     );
   }
+
+  Widget _buildBodyWidget() {
+    return Center(
+      child: Text('Home'),
+    );
+  }
+
 }

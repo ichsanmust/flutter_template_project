@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+// components
 import 'package:flutter_template_project/components/helper.dart';
 
 class Student {
@@ -29,7 +30,7 @@ class Student {
     return {'id': id, 'name': name, 'address': address, 'age': age};
   }
 
-  static Future list(authKey,page) async {
+  static Future apiList(authKey,page) async {
     var applicationToken = Helper.getApplicationToken();
     var url = Helper.baseUrlApi() +
         "?r=api/default/list-student&sort=-id&page=$page&per-page=10";
@@ -49,5 +50,13 @@ class Student {
         'data': {'message': 'system error'},
       };
     }
+  }
+
+  static Future list(authKey,page) async {
+    var data = await apiList(authKey,page)
+        .timeout(Duration(seconds: 30), onTimeout: () {
+      print('30 seconds timed out');
+    }).catchError(print);
+    return data;
   }
 }

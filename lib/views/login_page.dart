@@ -14,9 +14,15 @@ import 'package:flutter_template_project/views/home_page.dart';
 import 'package:flutter_template_project/models/login_model.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key, this.title, this.flashMessage = ''}) : super(key: key);
+  LoginPage(
+      {Key key,
+      this.title,
+      this.flashMessage = '',
+      this.typeMessage = Colors.green})
+      : super(key: key);
   final String title;
   final String flashMessage;
+  final Color typeMessage;
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -52,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    helper.flashMessage(widget.flashMessage);
+    helper.flashMessage(widget.flashMessage, type: widget.typeMessage);
     isLoading = false;
     message = "";
     getDevice();
@@ -83,9 +89,9 @@ class _LoginPageState extends State<LoginPage> {
       await LoginModel.login(
               model.username, model.password, deviceId, applicationId)
           .then((data) {
-        //print(data);
         if (data != null) {
           if (data['status'] == true) {
+            // jika success
             var token = data['data']['auth_key'];
             helper.login(token, model.username); // set session
             //message = data['message']; // di hide saja
@@ -100,11 +106,25 @@ class _LoginPageState extends State<LoginPage> {
             );
           } else {
             if (data['code'] == 200) {
-              //print(data['message']);
-              //message = data['message'] + '\n';
+              // jika gagal autentikasi
               var messagesError = LoginModel.errorMessage(data['data']);
               message += messagesError;
-            } else {
+            }
+//            else if (data['code'] == 403) {
+//              // jika gagal token
+//              message = data['data']['message'];
+//              Navigator.pushAndRemoveUntil(
+//                context,
+//                MaterialPageRoute(
+//                    builder: (context) => LoginPage(
+//                          title: 'Home',
+//                          flashMessage: message,
+//                        )),
+//                (Route<dynamic> route) => false,
+//              );
+//            }
+            else {
+              // jika error system
               message = data['data']['message'];
             }
           }
@@ -144,6 +164,23 @@ class _LoginPageState extends State<LoginPage> {
     return Future.value(false);
   }
   // on back button
+
+  @override
+  Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    return WillPopScope(
+      //onWillPop: () async => false, // disable back button
+      onWillPop: onWillPop,
+      child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false, // hidde back button
+            title: Text(widget.title),
+          ),
+          body: ModalProgressHUD(
+              child: _buildBodyWidget(screenSize), inAsyncCall: isLoading)),
+    );
+//        body: _buildBodyWidget());
+  }
 
   // body
   Widget _buildBodyWidget(screenSize) {
@@ -210,22 +247,5 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ));
   }
-  // body
-
-  @override
-  Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.of(context).size;
-    return WillPopScope(
-      //onWillPop: () async => false, // disable back button
-      onWillPop: onWillPop,
-      child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false, // hidde back button
-            title: Text(widget.title),
-          ),
-          body: ModalProgressHUD(
-              child: _buildBodyWidget(screenSize), inAsyncCall: isLoading)),
-    );
-//        body: _buildBodyWidget());
-  }
+// body
 }

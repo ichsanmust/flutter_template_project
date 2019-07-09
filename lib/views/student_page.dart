@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
+// component
 import 'package:flutter_template_project/components/helper.dart';
-
+// style
+import 'package:flutter_template_project/css/style.dart' as Style;
+// views
+import 'package:flutter_template_project/views/login_page.dart';
+// models
 import 'package:flutter_template_project/models/student_model.dart';
 
 class StudentPage extends StatefulWidget {
@@ -14,8 +19,11 @@ class _StudentPageState extends State<StudentPage> {
   final Helper helper = new Helper();
   Future<Map> get sessionDataSource => helper.getSession();
   var session = {};
-  var authKey = '';
 
+  Future<Map> get checkSessionData => helper.checkSession();
+  var _isAuthenticated = {};
+
+  var authKey = '';
   var student = new List<Student>();
   var studentDataRefreshed = new List<Student>();
   var page = 1;
@@ -29,6 +37,19 @@ class _StudentPageState extends State<StudentPage> {
 
 // insiate get user
   void getUsers() async {
+    _isAuthenticated = await checkSessionData;
+    if (_isAuthenticated['status'] == false) { // check session, jika sudah habis redirect ke login
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => LoginPage(
+              title: 'Login',
+              flashMessage: Helper.getTextSessionOver(),
+              typeMessage: Style.Default.btnDanger(),
+            )),
+            (Route<dynamic> route) => false,
+      );
+    }
     session = await sessionDataSource;
     setState(() {
       session = session;

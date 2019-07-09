@@ -15,8 +15,6 @@ import 'package:flutter_template_project/views/infinite_scroll.dart';
 // models
 import 'package:flutter_template_project/models/logout_model.dart';
 
-
-
 class LeftMenu extends StatefulWidget {
   @override
   _LeftMenuState createState() => _LeftMenuState();
@@ -26,6 +24,10 @@ class _LeftMenuState extends State<LeftMenu> {
   final Helper helper = new Helper();
   Future<Map> get sessionDataSource => helper.getSession();
   var session = {};
+
+  Future<Map> get checkSessionData => helper.checkSession();
+  var _isAuthenticated = {};
+
   var username = '';
   var imageUser =
       'https://yt3.ggpht.com/-lT_W_kI0_FI/AAAAAAAAAAI/AAAAAAAABFY/-6jXTYtQ-rQ/s88-mo-c-c0xffffffff-rj-k-no/photo.jpg';
@@ -33,9 +35,20 @@ class _LeftMenuState extends State<LeftMenu> {
   bool isLoading = false;
 
   void getSession() async {
+    _isAuthenticated = await checkSessionData;
+    if (_isAuthenticated['status'] == false) { // check session, jika sudah habis redirect ke login
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => LoginPage(
+                  title: 'Login',
+                  flashMessage: Helper.getTextSessionOver(),
+                  typeMessage: Style.Default.btnDanger(),
+                )),
+        (Route<dynamic> route) => false,
+      );
+    }
     session = await sessionDataSource;
-    //print(session);
-    //print(session['token']);
     setState(() {
       session = session;
       username = session['userid'];
@@ -57,7 +70,6 @@ class _LeftMenuState extends State<LeftMenu> {
     });
 
     await LogoutModel.logout(session['auth_key']).then((data) {
-      //print(data);
       if (data != null) {
         if (data['status'] == true) {
           message = data['message'];
@@ -66,14 +78,26 @@ class _LeftMenuState extends State<LeftMenu> {
             context,
             MaterialPageRoute(
                 builder: (context) => LoginPage(
-                  title: 'Login',
-                  flashMessage: message,
-                )),
-                (Route<dynamic> route) => false,
+                      title: 'Login',
+                      flashMessage: message,
+                    )),
+            (Route<dynamic> route) => false,
           );
         } else {
           if (data['code'] == 200) {
             message = data['message'];
+          } else if (data['code'] == 403) {
+            // jika gagal token
+            message = data['data']['message'];
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => LoginPage(
+                      title: 'Home',
+                      flashMessage: message,
+                      typeMessage: Style.Default.btnDanger())),
+              (Route<dynamic> route) => false,
+            );
           } else {
             message = data['data']['message'];
           }
