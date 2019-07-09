@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_template_project/views/student_page.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'dart:async';
 
@@ -9,9 +10,12 @@ import 'package:flutter_template_project/css/style.dart' as Style;
 //views
 import 'package:flutter_template_project/views/login_page.dart';
 import 'package:flutter_template_project/views/about_page.dart';
-import 'package:flutter_template_project/views/skeleton.dart';
+import 'package:flutter_template_project/views/shimmer_page.dart';
+import 'package:flutter_template_project/views/infinite_scroll.dart';
 // models
 import 'package:flutter_template_project/models/logout_model.dart';
+
+
 
 class LeftMenu extends StatefulWidget {
   @override
@@ -58,15 +62,15 @@ class _LeftMenuState extends State<LeftMenu> {
         if (data['status'] == true) {
           message = data['message'];
           helper.logout();
-          Navigator.pop(
-              context); // untuk menghide screen saat ini // jika diperlukan
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (BuildContext context) => new LoginPage(
-                        title: 'Login',
-                        flashMessage: message,
-                      )));
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LoginPage(
+                  title: 'Login',
+                  flashMessage: message,
+                )),
+                (Route<dynamic> route) => false,
+          );
         } else {
           if (data['code'] == 200) {
             message = data['message'];
@@ -119,7 +123,7 @@ class _LeftMenuState extends State<LeftMenu> {
         new ListTile(
           leading: new Icon(Icons.calendar_today),
           title: new Text(
-            'Data',
+            'Infinite Scroll',
             style: new TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
           ),
           onTap: () {
@@ -127,7 +131,35 @@ class _LeftMenuState extends State<LeftMenu> {
             Navigator.push(
                 context,
                 new MaterialPageRoute(
-                    builder: (BuildContext context) => new Skeleton()));
+                    builder: (BuildContext context) => new InfiniteScroll()));
+          },
+        ),
+        new ListTile(
+          leading: new Icon(Icons.calendar_today),
+          title: new Text(
+            'Shimmer',
+            style: new TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
+          ),
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (BuildContext context) => new ShimmerPage()));
+          },
+        ),
+        new ListTile(
+          leading: new Icon(Icons.calendar_today),
+          title: new Text(
+            'Student Data',
+            style: new TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
+          ),
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (BuildContext context) => new StudentPage()));
           },
         ),
         new ListTile(

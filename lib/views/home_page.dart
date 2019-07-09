@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -60,7 +61,9 @@ class _HomePageState extends State<HomePage> {
           fontSize: 12.0);
       return Future.value(false);
     }
-    return Future.value(true);
+    //return Future.value(true);
+    SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+    return Future.value(false);
   }
   // on back button
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -88,15 +89,15 @@ class _LoginPageState extends State<LoginPage> {
             var token = data['data']['auth_key'];
             helper.login(token, model.username); // set session
             //message = data['message']; // di hide saja
-            Navigator.pop(
-                context); // untuk menghide screen saat ini // jika diperlukan
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (BuildContext context) => new HomePage(
-                          title: 'Home',
-                          flashMessage: data['message'],
-                        )));
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage(
+                        title: 'Home',
+                        flashMessage: data['message'],
+                      )),
+              (Route<dynamic> route) => false,
+            );
           } else {
             if (data['code'] == 200) {
               //print(data['message']);
@@ -138,7 +139,9 @@ class _LoginPageState extends State<LoginPage> {
           fontSize: 12.0);
       return Future.value(false);
     }
-    return Future.value(true);
+    //return Future.value(true);
+    SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+    return Future.value(false);
   }
   // on back button
 
