@@ -4,8 +4,6 @@ import 'dart:convert';
 
 import 'package:flutter_template_project/components/helper.dart';
 
-const baseUrl = "https://jsonplaceholder.typicode.com";
-
 class Student {
   String key;
   int id;
@@ -31,10 +29,10 @@ class Student {
     return {'id': id, 'name': name, 'address': address, 'age': age};
   }
 
-  static Future list(authKey) async {
+  static Future list(authKey,page) async {
     var applicationToken = Helper.getApplicationToken();
     var url = Helper.baseUrlApi() +
-        "?r=api/default/list-student&sort=-id&per-page=false";
+        "?r=api/default/list-student&sort=-id&page=$page&per-page=10";
     var response = await http.get(url, headers: {
       //"Content-Type": "application/json",
       "app_mobile_token": applicationToken,
