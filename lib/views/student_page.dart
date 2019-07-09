@@ -60,7 +60,6 @@ class _StudentPageState extends State<StudentPage> {
     });
   }
 
-
 // refresh get user
   Future<Null> _refresh() {
     setState(() {
