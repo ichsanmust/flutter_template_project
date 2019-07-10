@@ -28,13 +28,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: _homePageApp(_isAuthenticated),
+      home: _homePageApp(_isAuthenticated, context),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-Widget _homePageApp(_isAuthenticated) {
+Widget _homePageApp(_isAuthenticated, context) {
   if (_isAuthenticated['status'] == true) {
     return HomePage(
       title: 'Home',

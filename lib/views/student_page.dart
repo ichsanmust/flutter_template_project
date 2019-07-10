@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
@@ -7,8 +9,11 @@ import 'package:flutter_template_project/components/helper.dart';
 import 'package:flutter_template_project/css/style.dart' as Style;
 // views
 import 'package:flutter_template_project/views/login_page.dart';
+import 'package:flutter_template_project/views/student_page_update.dart';
 // models
 import 'package:flutter_template_project/models/student_model.dart';
+
+enum ListPopupMenu { delete, update }
 
 class StudentPage extends StatefulWidget {
   @override
@@ -25,7 +30,7 @@ class _StudentPageState extends State<StudentPage> {
 
   var authKey = '';
   var model = new List<Student>();
-  var studentDataRefreshed = new List<Student>();
+  var modelDataRefreshed = new List<Student>();
   var page = 1;
   var countPage = 1;
   var totalItem = 0;
@@ -40,7 +45,7 @@ class _StudentPageState extends State<StudentPage> {
   TextEditingController _searchController = new TextEditingController();
 
 // insiate get user
-  void getUsers() async {
+  void getStudentList() async {
     _isAuthenticated = await checkSessionData;
     if (_isAuthenticated['status'] == false) {
       // check session, jika sudah habis redirect ke login
@@ -128,7 +133,7 @@ class _StudentPageState extends State<StudentPage> {
           if (type == 'refresh' || type == 'search') {
             model = list.map((model) => Student.fromJson(model)).toList();
           } else {
-            studentDataRefreshed =
+            modelDataRefreshed =
                 list.map((model) => Student.fromJson(model)).toList();
           }
           totalItem = data['data']['total_item'];
@@ -163,7 +168,7 @@ class _StudentPageState extends State<StudentPage> {
 
       setState(() {
         model = model;
-        studentDataRefreshed = studentDataRefreshed;
+        modelDataRefreshed = modelDataRefreshed;
         totalItem = totalItem;
         countPage = countPage;
         page = page;
@@ -187,7 +192,7 @@ class _StudentPageState extends State<StudentPage> {
     if (!isPerformingRequest) {
       setState(() => isPerformingRequest = true);
       await _callApi('more_data');
-      if (studentDataRefreshed.isEmpty) {
+      if (modelDataRefreshed.isEmpty) {
         double edge = 50.0;
         double offsetFromBottom = _scrollController.position.maxScrollExtent -
             _scrollController.position.pixels;
@@ -205,7 +210,7 @@ class _StudentPageState extends State<StudentPage> {
       }
       setState(() {
         message = 'success load more data';
-        model.addAll(studentDataRefreshed);
+        model.addAll(modelDataRefreshed);
         isPerformingRequest = false;
       });
     }
@@ -219,9 +224,118 @@ class _StudentPageState extends State<StudentPage> {
   }
 //  search data
 
+  // update data
+  void updateStudent(context, id, index) async {
+    final result = await Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (BuildContext context) => new StudentPageUpdate(
+                  title: 'Update Student',
+                  id: id,
+                  index: index,
+                )));
+    var updateData = await json.decode(result);
+
+    //print(updateData);
+    // update data list
+    model[index].name = updateData['name'];
+    model[index].address = updateData['address'];
+    model[index].age = updateData['age'];
+    setState(() {
+      model = model;
+    });
+    // update data list
+
+//    Scaffold.of(context)
+//      ..removeCurrentSnackBar()
+//      ..showSnackBar(SnackBar(content: Text("$updateData")));
+
+  }
+  // update data
+
+  // delete data
+  void deleteStudent(id, index) async {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Confirmation"),
+          content: new Text("Are you sure to delete data ?"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Yes"),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                setState(() {
+                  isLoading = true;
+                  message = "";
+                });
+
+                await Student.delete(authKey, id).then((data) {
+                  //print(data);
+                  if (data != null) {
+                    if (data['status'] == true) {
+                      model.removeWhere((item) => item.id == id);
+                      message = data['message'];
+                      helper.flashMessage(message,
+                          type: Style.Default.btnInfo());
+                    } else {
+                      if (data['code'] == 200) {
+                        message = data['message'];
+                      } else if (data['code'] == 403) {
+                        // jika gagal token
+                        message = data['data']['message'];
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LoginPage(
+                                  title: 'Home',
+                                  flashMessage: message,
+                                  typeMessage: Style.Default.btnDanger())),
+                          (Route<dynamic> route) => false,
+                        );
+                      } else {
+                        message = data['data']['message'];
+                      }
+                      //print(message);
+                      helper.flashMessage(message,
+                          type: Style.Default.btnDanger());
+                    }
+                  } else {
+                    message = 'system error (timeout)';
+                    print(message);
+                    helper.flashMessage(message,
+                        type: Style.Default.btnDanger());
+                  }
+
+                  setState(() {
+                    model = model;
+                    message = message;
+                    isLoading = false;
+                  });
+                });
+              },
+            ),
+            new FlatButton(
+              child: new Text("No"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  // delete data
+
   initState() {
     super.initState();
-    getUsers();
+    getStudentList();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -249,11 +363,11 @@ class _StudentPageState extends State<StudentPage> {
             return _refresh();
           },
           child: ModalProgressHUD(
-              child: _buildBodyWidget(), inAsyncCall: isLoading, opacity: 0),
+              child: _buildBodyWidget(context), inAsyncCall: isLoading),
         ));
   }
 
-  Widget _buildBodyWidget() {
+  Widget _buildBodyWidget(context) {
     return Column(
       children: <Widget>[
         new Container(
@@ -268,9 +382,9 @@ class _StudentPageState extends State<StudentPage> {
                   decoration: new InputDecoration(
                       hintText: 'Search', border: InputBorder.none),
                   onChanged: (text) {
-                    Future.delayed(const Duration(milliseconds: 1000), () {
+                    //Future.delayed(const Duration(milliseconds: 1000), () {
                       onSearchTextChanged(text);
-                    });
+                    //});
                   },
                 ),
                 trailing: new IconButton(
@@ -289,9 +403,9 @@ class _StudentPageState extends State<StudentPage> {
             itemCount: model.length + 1,
             itemBuilder: (context, index) {
               if (index == model.length) {
-                return _buildProgressIndicator();
+                return _buildProgressIndicator(context);
               } else {
-                return _buildItemView(index);
+                return _buildItemView(index, context);
               }
             },
             controller: _scrollController,
@@ -301,7 +415,7 @@ class _StudentPageState extends State<StudentPage> {
     );
   }
 
-  Widget _buildItemView(index) {
+  Widget _buildItemView(index, context) {
     var no = number + index;
     var key = model[index].key;
     var id = model[index].id;
@@ -312,48 +426,45 @@ class _StudentPageState extends State<StudentPage> {
       key: Key(key),
       padding: const EdgeInsets.all(5),
       child: Card(
-        child: ExpansionTile(
-          title: Text(
-            "$no. $name - $address ($age)",
-            style: new TextStyle(fontSize: 20.0),
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                "$no. $name - $address ($age)",
+                style: new TextStyle(fontSize: 20.0),
+              ),
+              PopupMenuButton<ListPopupMenu>(
+                onSelected: (ListPopupMenu result) {
+                  if (result == ListPopupMenu.delete) {
+                    deleteStudent(id, index);
+                  } else if (result == ListPopupMenu.update) {
+                    updateStudent(context, id, index);
+                  } else {
+                    // none
+                  }
+                },
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<ListPopupMenu>>[
+                      const PopupMenuItem<ListPopupMenu>(
+                        value: ListPopupMenu.update,
+                        child: Text('Update'),
+                      ),
+                      const PopupMenuItem<ListPopupMenu>(
+                        value: ListPopupMenu.delete,
+                        child: Text('Delete'),
+                      ),
+                    ],
+              ),
+            ],
           ),
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                FlatButton(
-                  child: Text(
-                    "View",
-                    style: new TextStyle(fontSize: 16.0),
-                  ),
-                  color: Colors.blue,
-                  onPressed: () {},
-                ),
-                FlatButton(
-                  child: Text(
-                    "Edit",
-                    style: new TextStyle(fontSize: 16.0),
-                  ),
-                  color: Colors.green,
-                  onPressed: () {},
-                ),
-                FlatButton(
-                  child: Text(
-                    "Delete",
-                    style: new TextStyle(fontSize: 16.0),
-                  ),
-                  color: Colors.red,
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ],
         ),
       ),
     );
   }
 
-  Widget _buildProgressIndicator() {
+  Widget _buildProgressIndicator(context) {
     return new Padding(
       padding: const EdgeInsets.all(8.0),
       child: new Center(

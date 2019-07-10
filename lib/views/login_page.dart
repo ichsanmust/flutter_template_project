@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -177,13 +178,13 @@ class _LoginPageState extends State<LoginPage> {
             title: Text(widget.title),
           ),
           body: ModalProgressHUD(
-              child: _buildBodyWidget(screenSize), inAsyncCall: isLoading)),
+              child: _buildBodyWidget(screenSize, context), inAsyncCall: isLoading)),
     );
 //        body: _buildBodyWidget());
   }
 
   // body
-  Widget _buildBodyWidget(screenSize) {
+  Widget _buildBodyWidget(screenSize, context) {
     return Container(
         padding: new EdgeInsets.all(20.0),
         child: new Form(
@@ -243,6 +244,27 @@ class _LoginPageState extends State<LoginPage> {
               Text(message,
                   style: Style.Default.errorText(context),
                   textAlign: TextAlign.center),
+              Center(
+                child: new RichText(
+                  text: new TextSpan(
+                      text: "Don't have account ? ",
+                      style: Style.Default.generalText(context),
+                      children: [
+                        new TextSpan(
+                          text: 'sign up ',
+                          style: Style.Default.linkText(context),
+                          recognizer: new TapGestureRecognizer()
+                            ..onTap = () {
+                              print('sign up');
+                            },
+                        ),
+                        new TextSpan(
+                          text: 'here.',
+                          style: Style.Default.generalText(context),
+                        ),
+                      ]),
+                ),
+              ),
             ],
           ),
         ));

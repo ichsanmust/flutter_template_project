@@ -113,11 +113,11 @@ class _HomePageState extends State<HomePage> {
             child: LeftMenu(),
           ),
           body: ModalProgressHUD(
-              child: _buildBodyWidget(), inAsyncCall: isLoading)),
+              child: _buildBodyWidget(context), inAsyncCall: isLoading)),
     );
   }
 
-  Widget _buildBodyWidget() {
+  Widget _buildBodyWidget(context) {
     return Center(
       child: Text('Home'),
     );

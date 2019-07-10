@@ -62,6 +62,10 @@ class _LeftMenuState extends State<LeftMenu> {
     getSession();
   }
 
+  void dispose() {
+    super.dispose();
+  }
+
   // logout action
   Future<List> _logout() async {
     setState(() {

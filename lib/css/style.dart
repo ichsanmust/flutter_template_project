@@ -45,6 +45,20 @@ class Default {
       //backgroundColor: Colors.red[200],
     );
   }
+
+  static TextStyle generalText(BuildContext context) {
+    return Theme.of(context).textTheme.display1.copyWith(
+      fontSize: 14,
+      color: Colors.black,
+    );
+  }
+  static TextStyle linkText(BuildContext context) {
+    return Theme.of(context).textTheme.display1.copyWith(
+      fontSize: 14,
+      decoration: TextDecoration.underline,
+      color: Colors.blue,
+    );
+  }
 }
 
 // theme 1
