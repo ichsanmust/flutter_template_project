@@ -30,10 +30,11 @@ class Student {
     return {'id': id, 'name': name, 'address': address, 'age': age};
   }
 
-  static Future apiList(authKey,page) async {
+  static Future apiList(authKey, page, filter) async {
+//    print(filter);
     var applicationToken = Helper.getApplicationToken();
     var url = Helper.baseUrlApi() +
-        "?r=api/default/list-student&sort=-id&page=$page&per-page=10";
+        "?r=api/default/list-student&sort=-id&page=$page&per-page=10&StudentSearch[name]=$filter";
     var response = await http.get(url, headers: {
       //"Content-Type": "application/json",
       "app_mobile_token": applicationToken,
@@ -52,8 +53,8 @@ class Student {
     }
   }
 
-  static Future list(authKey,page) async {
-    var data = await apiList(authKey,page)
+  static Future list(authKey, page, filter) async {
+    var data = await apiList(authKey, page, filter)
         .timeout(Duration(seconds: 30), onTimeout: () {
       print('30 seconds timed out');
     }).catchError(print);
