@@ -36,7 +36,8 @@ class _LeftMenuState extends State<LeftMenu> {
 
   void getSession() async {
     _isAuthenticated = await checkSessionData;
-    if (_isAuthenticated['status'] == false) { // check session, jika sudah habis redirect ke login
+    if (_isAuthenticated['status'] == false) {
+      // check session, jika sudah habis redirect ke login
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
@@ -151,6 +152,20 @@ class _LeftMenuState extends State<LeftMenu> {
         new ListTile(
           leading: new Icon(Icons.calendar_today),
           title: new Text(
+            'Student Data',
+            style: new TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
+          ),
+          onTap: () {
+            Navigator.of(context).pop();
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (BuildContext context) => new StudentPage()));
+          },
+        ),
+        new ListTile(
+          leading: new Icon(Icons.calendar_today),
+          title: new Text(
             'Infinite Scroll',
             style: new TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
           ),
@@ -177,20 +192,6 @@ class _LeftMenuState extends State<LeftMenu> {
           },
         ),
         new ListTile(
-          leading: new Icon(Icons.calendar_today),
-          title: new Text(
-            'Student Data',
-            style: new TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
-          ),
-          onTap: () {
-            Navigator.of(context).pop();
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (BuildContext context) => new StudentPage()));
-          },
-        ),
-        new ListTile(
           leading: new Icon(Icons.exit_to_app),
           title: new Text(
             'Logout',
@@ -200,52 +201,6 @@ class _LeftMenuState extends State<LeftMenu> {
             this._logout();
           },
         ),
-//        new Divider(),
-//        new ListTile(
-//          //contentPadding: EdgeInsets.all(20.0),
-//          title: Row(
-//            //mainAxisAlignment: MainAxisAlignment.center,
-//            children: <Widget>[
-//              new IconTheme(
-//                data: new IconThemeData(color: Colors.black),
-//                child: new Icon(Icons.tab),
-//              ),
-//              new Text('Tab Layout Page'),
-//            ],
-//          ),
-//          //subtitle: Text('f'),
-//          //contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-////          onTap: () {
-////            Navigator.of(context).pop();
-////            Navigator.push(
-////                context,
-////                new MaterialPageRoute(
-////                    builder: (BuildContext context) => new TabLayoutDemo()));
-////          },
-//        ),
-//        new ListTile(
-//          leading: new Icon(Icons.home),
-//          title: new Text(
-//            'Home',
-//            style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
-//          ),
-//          //selected: i == _selectedIndex,
-//          //onTap: () => _onSelectItem(i),
-//        ),
-//        new ListTile(
-//          leading: new Icon(Icons.ac_unit),
-//          title: new Text(
-//            'Skeleton',
-//            style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
-//          ),
-//          onTap: () {
-//            Navigator.of(context).pop();
-//            Navigator.push(
-//                context,
-//                new MaterialPageRoute(
-//                    builder: (BuildContext context) => new Skeleton()));
-//          },
-//        )
       ],
     );
   }

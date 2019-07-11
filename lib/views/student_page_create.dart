@@ -10,18 +10,14 @@ import 'package:flutter_template_project/views/login_page.dart';
 // models
 import 'package:flutter_template_project/models/student_model.dart';
 
-class StudentPageUpdate extends StatefulWidget {
-  StudentPageUpdate({Key key, this.title, this.id, this.index})
-      : super(key: key);
+class StudentPageCreate extends StatefulWidget {
+  StudentPageCreate({Key key, this.title}) : super(key: key);
   final String title;
-  final int id;
-  final int index;
-
   @override
-  _StudentPageUpdateState createState() => _StudentPageUpdateState();
+  _StudentPageCreateState createState() => _StudentPageCreateState();
 }
 
-class _StudentPageUpdateState extends State<StudentPageUpdate> {
+class _StudentPageCreateState extends State<StudentPageCreate> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final Helper helper = new Helper();
   Future<Map> get sessionDataSource => helper.getSession();
@@ -33,7 +29,7 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
   bool isLoading = false;
   String message = '';
 
-  Student model;
+  Student model = new Student(0, '', '', 0);
   static final TextEditingController _nameController = TextEditingController();
   static final TextEditingController _addressController =
       TextEditingController();
@@ -59,56 +55,6 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
     setState(() {
       session = session;
       authKey = session['auth_key'];
-      isLoading = true;
-      message = "";
-    });
-
-    await Student.view(authKey, widget.id).then((data) {
-      //print(data);
-      if (data != null) {
-        if (data['status'] == true) {
-          var viewData = data['data'];
-          model = new Student(viewData['id'], viewData['name'],
-              viewData['address'], viewData['age']);
-
-          setState(() {
-            _nameController.text = viewData['name'];
-            _addressController.text = viewData['address'];
-            _ageController.text = viewData['age'].toString();
-          });
-
-          //message = 'success view data';
-        } else {
-          if (data['code'] == 200) {
-            message = data['message'];
-          } else if (data['code'] == 403) {
-            // jika gagal token
-            message = data['data']['message'];
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => LoginPage(
-                      title: 'Home',
-                      flashMessage: message,
-                      typeMessage: Style.Default.btnDanger())),
-              (Route<dynamic> route) => false,
-            );
-          } else {
-            message = data['data']['message'];
-          }
-          //print(message);
-          helper.flashMessage(message, type: Style.Default.btnDanger());
-        }
-      } else {
-        message = 'system error (timeout)';
-        helper.flashMessage(message, type: Style.Default.btnDanger());
-      }
-
-      setState(() {
-        model = model;
-        message = message;
-        isLoading = false;
-      });
     });
   }
 
@@ -132,14 +78,19 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
         message = "";
       });
 
-      var id = model.id;
       var name = model.name;
       var address = model.address;
       var age = model.age;
-      await Student.update(authKey, id, name, address, age).then((data) {
+      print(model.name);
+      print(model.address);
+      print(model.age);
+      await Student.create(authKey, name, address, age).then((data) {
+        print(data);
         if (data != null) {
           if (data['status'] == true) {
             //message = data['message'];
+            var addData = data['data'];
+            var id = addData['id'];
             helper.flashMessage(data['message'], type: Style.Default.btnInfo());
             Navigator.pop(context,
                 '{"id": $id , "name" : "$name", "address" : "$address", "age": $age}');
@@ -172,6 +123,7 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
         }
       });
       setState(() {
+        model = model;
         message = message;
         isLoading = false;
       });
@@ -186,7 +138,7 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
     return _form(context);
   }
 
-  Widget _form(context) {
+  Widget _form(context){
     final Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
@@ -197,7 +149,6 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
             child: _buildBodyWidget(screenSize, context),
             inAsyncCall: isLoading));
   }
-
   // body
   Widget _buildBodyWidget(screenSize, context) {
     return Container(

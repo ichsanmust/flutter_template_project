@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
 //    }
 //  }
 
-  // action Post login
+  // action login
   Future<List> _login() async {
     if (this._formKey.currentState.validate()) {
       _formKey.currentState.save(); // Save our form now.
@@ -142,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
     //return _login();
     return null;
   }
-  // end action Post login
+  // action login
 
   // on back button
   Future<bool> onWillPop() {
@@ -180,7 +180,6 @@ class _LoginPageState extends State<LoginPage> {
           body: ModalProgressHUD(
               child: _buildBodyWidget(screenSize, context), inAsyncCall: isLoading)),
     );
-//        body: _buildBodyWidget());
   }
 
   // body

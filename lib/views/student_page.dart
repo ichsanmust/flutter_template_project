@@ -10,6 +10,7 @@ import 'package:flutter_template_project/css/style.dart' as Style;
 // views
 import 'package:flutter_template_project/views/login_page.dart';
 import 'package:flutter_template_project/views/student_page_update.dart';
+import 'package:flutter_template_project/views/student_page_create.dart';
 // models
 import 'package:flutter_template_project/models/student_model.dart';
 
@@ -43,8 +44,9 @@ class _StudentPageState extends State<StudentPage> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   TextEditingController _searchController = new TextEditingController();
+  int selectedList;
 
-// insiate get user
+// inisiate get user
   void getStudentList() async {
     _isAuthenticated = await checkSessionData;
     if (_isAuthenticated['status'] == false) {
@@ -105,7 +107,6 @@ class _StudentPageState extends State<StudentPage> {
     });
 
     setState(() {
-      //model.add(new Student(0,'-','-',0));
       model = model;
       totalItem = totalItem;
       countPage = countPage;
@@ -224,6 +225,26 @@ class _StudentPageState extends State<StudentPage> {
   }
 //  search data
 
+  // add data
+  void addStudent(context) async {
+    await Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (BuildContext context) => new StudentPageCreate(
+                  title: 'Add Student',
+                )));
+    _refresh();
+    setState(() {
+      selectedList = 0;
+    });
+    Future.delayed(const Duration(milliseconds: 3500), () {
+      setState(() {
+        selectedList = null;
+      });
+    });
+  }
+  // add data
+
   // update data
   void updateStudent(context, id, index) async {
     final result = await Navigator.push(
@@ -234,22 +255,31 @@ class _StudentPageState extends State<StudentPage> {
                   id: id,
                   index: index,
                 )));
-    var updateData = await json.decode(result);
 
-    //print(updateData);
-    // update data list
-    model[index].name = updateData['name'];
-    model[index].address = updateData['address'];
-    model[index].age = updateData['age'];
-    setState(() {
-      model = model;
-    });
-    // update data list
+    if (result != null) {
+      var updateData = await json.decode(result);
+
+      //print(updateData);
+      // update data list
+      model[index].name = updateData['name'];
+      model[index].address = updateData['address'];
+      model[index].age = updateData['age'];
+      setState(() {
+        selectedList = index;
+        model = model;
+      });
+
+      Future.delayed(const Duration(milliseconds: 3500), () {
+        setState(() {
+          selectedList = null;
+        });
+      });
+      // update data list
 
 //    Scaffold.of(context)
 //      ..removeCurrentSnackBar()
 //      ..showSnackBar(SnackBar(content: Text("$updateData")));
-
+    }
   }
   // update data
 
@@ -354,17 +384,25 @@ class _StudentPageState extends State<StudentPage> {
   @override
   build(context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Student"),
-        ),
-        body: RefreshIndicator(
-          key: _refreshIndicatorKey,
-          onRefresh: () {
-            return _refresh();
-          },
-          child: ModalProgressHUD(
-              child: _buildBodyWidget(context), inAsyncCall: isLoading),
-        ));
+      appBar: AppBar(
+        title: Text("Student"),
+      ),
+      body: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: () {
+          return _refresh();
+        },
+        child: ModalProgressHUD(
+            child: _buildBodyWidget(context), inAsyncCall: isLoading),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          addStudent(context);
+        },
+        tooltip: 'Add Student',
+        child: Icon(Icons.add),
+      ),
+    );
   }
 
   Widget _buildBodyWidget(context) {
@@ -383,7 +421,7 @@ class _StudentPageState extends State<StudentPage> {
                       hintText: 'Search', border: InputBorder.none),
                   onChanged: (text) {
                     //Future.delayed(const Duration(milliseconds: 1000), () {
-                      onSearchTextChanged(text);
+                    onSearchTextChanged(text);
                     //});
                   },
                 ),
@@ -422,10 +460,21 @@ class _StudentPageState extends State<StudentPage> {
     var name = model[index].name;
     var address = model[index].address;
     var age = model[index].age;
+    Color colorSelected;
+    if (selectedList == index) {
+      colorSelected = Style.Default.btnPrimary();
+    } else {
+      colorSelected = Colors.white;
+    }
     return Padding(
       key: Key(key),
       padding: const EdgeInsets.all(5),
       child: Card(
+        shape: RoundedRectangleBorder(
+            side: new BorderSide(color: colorSelected, width: 2.0),
+            borderRadius: BorderRadius.circular(5.0)),
+        //color: Colors.blue[100],
+
         child: Container(
           padding: const EdgeInsets.all(10),
           child: Row(

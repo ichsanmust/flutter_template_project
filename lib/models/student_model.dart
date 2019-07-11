@@ -14,6 +14,16 @@ class Student {
   String address;
   int age;
 
+  static attributes() {
+    var attributesData = [
+      'id',
+      'name',
+      'address',
+      'age'
+    ];
+    return attributesData;
+  }
+
   Student(int id, String name, String address, int age) {
     this.key = "keyStudent_$id";
     this.id = id;
@@ -44,6 +54,20 @@ class Student {
       return 'Age Must Numeric';
     }
     return null;
+  }
+
+  static errorMessage(error) {
+    var messages = '';
+    var attributes = Student.attributes();
+    for (var attribute in attributes) {
+      if (error[attribute] != null) {
+        var errors = error[attribute];
+        for (var errorData in errors) {
+          messages = messages + errorData + '\n';
+        }
+      }
+    }
+    return messages;
   }
 
   Student.fromJson(Map json)
@@ -175,6 +199,40 @@ class Student {
 
   static Future update(authKey,id,name,address,age) async {
     var data = await apiUpdate(authKey,id,name,address,age)
+        .timeout(Duration(seconds: 30), onTimeout: () {
+      print('30 seconds timed out');
+    }).catchError(print);
+    return data;
+  }
+
+  static Future apiCreate(authKey,name,address,age) async {
+    var applicationToken = Helper.getApplicationToken();
+    var url = Helper.baseUrlApi() +
+        "?r=api/default/create-student";
+    var response = await http.post(url, headers: {
+      //"Content-Type": "application/json",
+      "app_mobile_token": applicationToken,
+      "user_mobile_token": authKey,
+    }, body: {
+      "name": name,
+      "address": address,
+      "age": age.toString(),
+    });
+    try {
+      return json.decode(response.body);
+    } catch (e) {
+      print('error caught: $e');
+      return {
+        'status': false,
+        'message': e,
+        'code': 500,
+        'data': {'message': 'system error'},
+      };
+    }
+  }
+
+  static Future create(authKey,name,address,age) async {
+    var data = await apiCreate(authKey,name,address,age)
         .timeout(Duration(seconds: 30), onTimeout: () {
       print('30 seconds timed out');
     }).catchError(print);

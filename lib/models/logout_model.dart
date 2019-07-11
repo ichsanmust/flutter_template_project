@@ -6,22 +6,6 @@ import 'dart:convert';
 import 'package:flutter_template_project/components/helper.dart';
 
 class LogoutModel {
-
-
-//  static errorMessage(error) {
-//    var messages = '';
-//    var attributes = LoginModel.attributes();
-//    for (var attribute in attributes) {
-//      if (error[attribute] != null) {
-//        var errors = error[attribute];
-//        for (var errorData in errors) {
-//          messages = messages + errorData + ', ';
-//        }
-//      }
-//    }
-//    return messages;
-//  }
-
   static Future apiLogout(authKey) async {
     var applicationToken = Helper.getApplicationToken();
     var url = Helper.baseUrlApi() + "?r=api/default/logout";
