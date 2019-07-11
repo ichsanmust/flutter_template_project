@@ -1,10 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 // component
 import 'package:flutter_template_project/components/helper.dart';
+import 'package:flutter_template_project/components/debouncer.dart';
 // style
 import 'package:flutter_template_project/css/style.dart' as Style;
 // views
@@ -45,6 +46,8 @@ class _StudentPageState extends State<StudentPage> {
       new GlobalKey<RefreshIndicatorState>();
   TextEditingController _searchController = new TextEditingController();
   int selectedList;
+
+  final _debouncer = Debouncer(milliseconds: 500);
 
 // inisiate get user
   void getStudentList() async {
@@ -220,8 +223,8 @@ class _StudentPageState extends State<StudentPage> {
 
 //  search data
   onSearchTextChanged(String text) async {
-    model.clear();
-    _callApi('search');
+      model.clear();
+      _callApi('search');
   }
 //  search data
 
@@ -420,9 +423,8 @@ class _StudentPageState extends State<StudentPage> {
                   decoration: new InputDecoration(
                       hintText: 'Search', border: InputBorder.none),
                   onChanged: (text) {
-                    //Future.delayed(const Duration(milliseconds: 1000), () {
-                    onSearchTextChanged(text);
-                    //});
+                    // onSearchTextChanged(text);
+                    _debouncer.run(() => onSearchTextChanged(text));
                   },
                 ),
                 trailing: new IconButton(
