@@ -89,8 +89,8 @@ class _StudentPageState extends State<StudentPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => LoginPage(
-                      title: 'Home',
-                      flashMessage: message,
+                      title: 'Login',
+                      flashMessage: Helper.getTextSessionOver(),
                       typeMessage: Style.Default.btnDanger())),
               (Route<dynamic> route) => false,
             );
@@ -150,8 +150,8 @@ class _StudentPageState extends State<StudentPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => LoginPage(
-                      title: 'Home',
-                      flashMessage: message,
+                      title: 'Login',
+                      flashMessage: Helper.getTextSessionOver(),
                       typeMessage: Style.Default.btnDanger())),
               (Route<dynamic> route) => false,
             );
@@ -323,8 +323,8 @@ class _StudentPageState extends State<StudentPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => LoginPage(
-                                  title: 'Home',
-                                  flashMessage: message,
+                                  title: 'Login',
+                                  flashMessage: Helper.getTextSessionOver(),
                                   typeMessage: Style.Default.btnDanger())),
                           (Route<dynamic> route) => false,
                         );

@@ -98,8 +98,8 @@ class _LeftMenuState extends State<LeftMenu> {
               context,
               MaterialPageRoute(
                   builder: (context) => LoginPage(
-                      title: 'Home',
-                      flashMessage: message,
+                      title: 'Login',
+                      flashMessage: Helper.getTextSessionOver(),
                       typeMessage: Style.Default.btnDanger())),
               (Route<dynamic> route) => false,
             );

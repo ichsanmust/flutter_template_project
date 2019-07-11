@@ -88,8 +88,8 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
               context,
               MaterialPageRoute(
                   builder: (context) => LoginPage(
-                      title: 'Home',
-                      flashMessage: message,
+                      title: 'Login',
+                      flashMessage: Helper.getTextSessionOver(),
                       typeMessage: Style.Default.btnDanger())),
               (Route<dynamic> route) => false,
             );
@@ -150,13 +150,13 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
               message += messagesError;
             } else if (data['code'] == 403) {
               // jika gagal token
-              message = data['data']['message'];
+              // message = data['data']['message'];
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
                     builder: (context) => LoginPage(
-                        title: 'Home',
-                        flashMessage: message,
+                        title: 'Login',
+                        flashMessage: Helper.getTextSessionOver(),
                         typeMessage: Style.Default.btnDanger())),
                 (Route<dynamic> route) => false,
               );
