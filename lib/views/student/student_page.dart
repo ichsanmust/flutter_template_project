@@ -9,8 +9,8 @@ import 'package:flutter_template_project/components/helper.dart';
 import 'package:flutter_template_project/css/style.dart' as Style;
 // views
 import 'package:flutter_template_project/views/login_page.dart';
-import 'package:flutter_template_project/views/student_page_update.dart';
-import 'package:flutter_template_project/views/student_page_create.dart';
+import 'package:flutter_template_project/views/student/student_page_update.dart';
+import 'package:flutter_template_project/views/student/student_page_create.dart';
 // models
 import 'package:flutter_template_project/models/student_model.dart';
 

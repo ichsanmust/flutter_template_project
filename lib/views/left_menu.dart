@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_template_project/views/student_page.dart';
+import 'package:flutter_template_project/views/student/student_page.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'dart:async';
 
