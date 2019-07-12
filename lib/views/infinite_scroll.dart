@@ -6,7 +6,7 @@ class InfiniteScroll extends StatefulWidget {
 }
 
 class _InfiniteScrollState extends State<InfiniteScroll> {
-  List<int> items = List.generate(10, (i) => i);
+  List<int> items = List.generate(20, (i) => i);
   ScrollController _scrollController = new ScrollController();
   bool isPerformingRequest = false;
 
@@ -82,7 +82,7 @@ class _InfiniteScrollState extends State<InfiniteScroll> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text("Infinite ListView"),
+        title: Text("Infinite Scroll List View"),
       ),
       body: ListView.builder(
         itemCount: items.length + 1,

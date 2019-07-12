@@ -39,7 +39,7 @@ class _StudentPageState extends State<StudentPage> {
   var number = 1;
   ScrollController _scrollController = new ScrollController();
   bool isPerformingRequest = false;
-  bool isLoading = false;
+  bool isLoading = true; // karena saat pertama kali load page, meload data
   String message = '';
 
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
@@ -48,6 +48,7 @@ class _StudentPageState extends State<StudentPage> {
   int selectedList;
 
   final _debouncer = Debouncer(milliseconds: 500);
+  double _listViewItemHeight = 50.0;
 
 // inisiate get user
   void getStudentList() async {
@@ -66,13 +67,15 @@ class _StudentPageState extends State<StudentPage> {
       );
     }
     session = await sessionDataSource;
-    setState(() {
-      session = session;
-      authKey = session['auth_key'];
-      isLoading = true;
-      message = "";
-      page = 1;
-    });
+    if(mounted) {
+      setState(() {
+        session = session;
+        authKey = session['auth_key'];
+        isLoading = true;
+        message = "";
+        page = 1;
+      });
+    }
 
     await Student.list(authKey, page, _searchController.text).then((data) {
       if (data != null) {
@@ -230,21 +233,36 @@ class _StudentPageState extends State<StudentPage> {
 
   // add data
   void addStudent(context) async {
-    await Navigator.push(
+    final result = await Navigator.push(
         context,
         new MaterialPageRoute(
             builder: (BuildContext context) => new StudentPageCreate(
                   title: 'Add Student',
                 )));
-    _refresh();
     setState(() {
-      selectedList = 0;
+      isLoading = true;
     });
-    Future.delayed(const Duration(milliseconds: 3500), () {
+    if (result != null) {
+      await _refresh();
       setState(() {
-        selectedList = null;
+        selectedList = 0;
       });
-    });
+      _scrollController.animateTo(
+        0.0,
+        curve: Curves.easeOut,
+        duration: const Duration(milliseconds: 300),
+      );
+      Future.delayed(const Duration(milliseconds: 3500), () {
+        setState(() {
+          selectedList = null;
+        });
+      });
+    }
+    if(mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
   // add data
 
@@ -271,6 +289,8 @@ class _StudentPageState extends State<StudentPage> {
         selectedList = index;
         model = model;
       });
+
+      _scrollController.animateTo(index * _listViewItemHeight, duration: new Duration(milliseconds: 500), curve: Curves.ease);
 
       Future.delayed(const Duration(milliseconds: 3500), () {
         setState(() {

@@ -35,6 +35,15 @@ class _StudentPageCreateState extends State<StudentPageCreate> {
       TextEditingController();
   static final TextEditingController _ageController = TextEditingController();
 
+  clearModel(){
+    setState(() {
+      _nameController.text = '';
+      _addressController.text = '';
+      _ageController.text = '';
+      // _formKey.currentState.reset();
+    });
+  }
+
   // insiate get user
   void getStudent() async {
     _isAuthenticated = await checkSessionData;
@@ -52,14 +61,17 @@ class _StudentPageCreateState extends State<StudentPageCreate> {
       );
     }
     session = await sessionDataSource;
-    setState(() {
-      session = session;
-      authKey = session['auth_key'];
-    });
+    if(mounted) {
+      setState(() {
+        session = session;
+        authKey = session['auth_key'];
+      });
+    }
   }
 
   initState() {
     super.initState();
+    clearModel();
     getStudent();
   }
 
@@ -81,11 +93,8 @@ class _StudentPageCreateState extends State<StudentPageCreate> {
       var name = model.name;
       var address = model.address;
       var age = model.age;
-      print(model.name);
-      print(model.address);
-      print(model.age);
       await Student.create(authKey, name, address, age).then((data) {
-        print(data);
+        //print(data);
         if (data != null) {
           if (data['status'] == true) {
             //message = data['message'];
@@ -138,7 +147,7 @@ class _StudentPageCreateState extends State<StudentPageCreate> {
     return _form(context);
   }
 
-  Widget _form(context){
+  Widget _form(context) {
     final Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
@@ -149,6 +158,7 @@ class _StudentPageCreateState extends State<StudentPageCreate> {
             child: _buildBodyWidget(screenSize, context),
             inAsyncCall: isLoading));
   }
+
   // body
   Widget _buildBodyWidget(screenSize, context) {
     return Container(

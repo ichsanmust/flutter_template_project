@@ -30,7 +30,7 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
   Future<Map> get checkSessionData => helper.checkSession();
   var _isAuthenticated = {};
   var authKey = '';
-  bool isLoading = false;
+  bool isLoading = true; // karena saat pertama kali load page, meload data
   String message = '';
 
   Student model;
@@ -38,6 +38,15 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
   static final TextEditingController _addressController =
       TextEditingController();
   static final TextEditingController _ageController = TextEditingController();
+
+  clearModel(){
+    setState(() {
+      _nameController.text = '';
+      _addressController.text = '';
+      _ageController.text = '';
+      // _formKey.currentState.reset();
+    });
+  }
 
   // insiate get user
   void getStudent() async {
@@ -114,6 +123,7 @@ class _StudentPageUpdateState extends State<StudentPageUpdate> {
 
   initState() {
     super.initState();
+    clearModel();
     getStudent();
   }
 

@@ -56,6 +56,12 @@ class Student {
     return null;
   }
 
+  clear(){
+    this.name = '';
+    this.address = '';
+    this.age = null;
+  }
+
   static errorMessage(error) {
     var messages = '';
     var attributes = Student.attributes();

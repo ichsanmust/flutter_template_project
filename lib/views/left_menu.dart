@@ -50,10 +50,12 @@ class _LeftMenuState extends State<LeftMenu> {
       );
     }
     session = await sessionDataSource;
-    setState(() {
-      session = session;
-      username = session['userid'];
-    });
+    if(mounted) {
+      setState(() {
+        session = session;
+        username = session['userid'];
+      });
+    }
   }
 
   // inisiate
