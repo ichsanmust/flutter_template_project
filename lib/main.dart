@@ -42,7 +42,7 @@ Widget _homePageApp(_isAuthenticated, context) {
   } else {
     if (_isAuthenticated['auth_key'] != '') {
       return LoginPage(
-          title: 'Login',
+          title: 'Flutter Template Project - Login',
           flashMessage: Helper.getTextSessionOver(),
           typeMessage: Style.Default.btnDanger());
     } else {
