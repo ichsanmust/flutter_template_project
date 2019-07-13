@@ -47,7 +47,7 @@ Widget _homePageApp(_isAuthenticated, context) {
           typeMessage: Style.Default.btnDanger());
     } else {
       return LoginPage(
-        title: 'Login',
+        title: 'Flutter Template Project - Login',
       );
     }
   }
